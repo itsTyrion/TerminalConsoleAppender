@@ -168,6 +168,14 @@ public final class MinecraftFormattingConverter extends LogEventPatternConverter
                     result.append(ansiCodes[format]);
                 }
                 pos = next += 2;
+            } else if (s.charAt(next + 1) == '#' && next + 7 < last) {
+                if (pos != next) {
+                    result.append(s, pos, next);
+                }
+                if (ansi) {
+                    result.append(hexColor(s.substring(next + 2, next + 8)));
+                }
+                pos = next += 8;
             } else {
                 next++;
             }
@@ -179,6 +187,13 @@ public final class MinecraftFormattingConverter extends LogEventPatternConverter
         if (ansi) {
             result.append(ANSI_RESET);
         }
+    }
+
+    private static String hexColor(String hex) {
+        return "\u001B[38;2;" +
+               Integer.parseInt(hex.substring(0, 2), 16) + ";" +
+               Integer.parseInt(hex.substring(2, 4), 16) + ";" +
+               Integer.parseInt(hex.substring(4, 6), 16) + "m";
     }
 
     /**
